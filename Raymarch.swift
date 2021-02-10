@@ -8,12 +8,6 @@ let RES_X = 50
 let RES_Y = 23
 
 
-struct vec3 {
-	var x = 0.0
-	var y = 0.0
-	var z = 0.0
-}
-
 func length(_ a: SIMD3<Double>) -> Double {
 	return (a*a).sum().squareRoot()
 }
@@ -46,16 +40,13 @@ func DE(_ point: SIMD3<Double>) -> Double {
 	return s < p ? s : p
 }
 
-func dot(_ a: vec3, _ b: vec3) -> Double {
-	return a.x * b.x + a.y * b.y + a.z * b.z
-}
 
 func getNormal(_ point: SIMD3<Double>) -> SIMD3<Double> {
 	let dist = DE(point)
 	var n = SIMD3<Double>(
-		dist - DE(point + SIMD3<Double>(NORMAL_OFFSET, 0, 0)),
-		dist - DE(point + SIMD3<Double>(0, NORMAL_OFFSET, 0)),
-		dist - DE(point + SIMD3<Double>(0, 0, NORMAL_OFFSET))
+		dist - DE(point - SIMD3<Double>(NORMAL_OFFSET, 0, 0)),
+		dist - DE(point - SIMD3<Double>(0, NORMAL_OFFSET, 0)),
+		dist - DE(point - SIMD3<Double>(0, 0, NORMAL_OFFSET))
 	)
 
 	let len = length(n)
