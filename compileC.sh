@@ -1,0 +1,1 @@
+gcc Raymarch.c -o Raymarch -lm -O3
