@@ -43,15 +43,15 @@ func DE(_ point: SIMD3<Double>) -> Double {
 
 func getNormal(_ point: SIMD3<Double>) -> SIMD3<Double> {
 	let dist = DE(point)
-	var n = SIMD3<Double>(
+	let normal = SIMD3<Double>(
 		dist - DE(point - SIMD3<Double>(NORMAL_OFFSET, 0, 0)),
 		dist - DE(point - SIMD3<Double>(0, NORMAL_OFFSET, 0)),
 		dist - DE(point - SIMD3<Double>(0, 0, NORMAL_OFFSET))
 	)
 
-	let len = length(n)
+	let len = length(normal)
 	if (len == 0) { return SIMD3<Double>(0, 0, 0) }
-	return n / len
+	return normal / len
 }
 
 struct raymarchResult {
@@ -79,8 +79,8 @@ func main() {
 	var rayV = ray()
 	for y in (0...RES_Y).reversed() {
 		for x in 0..<RES_X {
-			var u = Double(x) / Double(RES_X - 1) * 2 - 1
-			var v = Double(y) / Double(RES_Y - 1) * 2 - 1
+			let u = Double(x) / Double(RES_X - 1) * 2 - 1
+			let v = Double(y) / Double(RES_Y - 1) * 2 - 1
 
 			var dir = SIMD3<Double>(u, v, -1)
 			let len = length(dir)
