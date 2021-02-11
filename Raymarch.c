@@ -3,29 +3,24 @@
 
 #define MAX_ITTERS 100
 #define MIN_DIST 0.001
-
 #define NORMAL_OFFSET 0.01
-
 #define AO_BASE 1.02
-
 #define RES_X 50
 #define RES_Y 23
 
-//#define RES_X 100
-//#define RES_Y 46
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
-struct vec3 {
+typedef struct _vec3 {
 	double x;
 	double y;
 	double z;
-};
-typedef struct vec3 vec3;
+} vec3;
 
-struct ray {
+typedef struct _ray {
 	vec3 startpos;
 	vec3 direction;
-};
-typedef struct ray ray;
+} ray;
 
 inline static vec3 vec3_c(double x, double y, double z) {
 	vec3 a;
@@ -48,11 +43,9 @@ inline static double DE_Plane(vec3 point, double height) {
 }
 
 double DE(vec3 point) {
-	vec3 sphere1 = vec3_c(0, 0, 0);
-	double s = DE_Sphere(point, sphere1, 1);
-	double p = DE_Plane(point, -1);
-	if (s < p) return s;
-	return p;
+	const double s = DE_Sphere(point, vec3_c(0, 0, 0), 1);
+	const double p = DE_Plane(point, -1);
+	return MIN(s, p);
 
 }
 
@@ -101,11 +94,11 @@ int main() {
 	ray ray;
 	for (int y = RES_Y-1; y >= 0; y--) {
 		for (int x = 0; x < RES_X; x++) {
-			double u = (double)x / (double)(RES_X - 1) * 2 - 1;
-			double v = (double)y / (double)(RES_Y - 1) * 2 - 1;
+			const double u = (double)x / (double)(RES_X - 1) * 2 - 1;
+			const double v = (double)y / (double)(RES_Y - 1) * 2 - 1;
 
 			vec3 dir = vec3_c(u, v, -1);
-			double len = sqrt(
+			const double len = sqrt(
 				(dir.x) * (dir.x) +
 				(dir.y) * (dir.y) +
 				(dir.z) * (dir.z)
@@ -125,8 +118,7 @@ int main() {
 			const double ao = pow(AO_BASE, -iterations);
 
 			// Phong Shading
-			double light = dot(n, vec3_c(0.5773502691896258, 0.5773502691896258, 0.5773502691896258));
-			if (light < 0) light = 0;
+			const double light = MAX(dot(n, vec3_c(0.5773502691896258, 0.5773502691896258, 0.5773502691896258)), 0);
 
 			const double color = ao * light;
 
