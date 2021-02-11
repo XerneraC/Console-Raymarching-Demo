@@ -49,31 +49,28 @@ double DE(vec3 point) {
 
 }
 
-
 inline static double dot(vec3 a, vec3 b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-
-
 vec3 getNormal(vec3 point) {
-	double dist = DE(point);
-	vec3 n = vec3_c(
+	const double dist = DE(point);
+	vec3 normal = vec3_c(
 		dist - DE(vec3_c(point.x - NORMAL_OFFSET, point.y, point.z)),
 		dist - DE(vec3_c(point.x, point.y - NORMAL_OFFSET, point.z)),
 		dist - DE(vec3_c(point.x, point.y, point.z - NORMAL_OFFSET))
 	);
 
 	double len = sqrt(
-		(n.x) * (n.x) +
-		(n.y) * (n.y) +
-		(n.z) * (n.z)
+		(normal.x) * (normal.x) +
+		(normal.y) * (normal.y) +
+		(normal.z) * (normal.z)
 	);
 	if (len == 0) return vec3_c(0, 0, 0);
-	n.x /= len;
-	n.y /= len;
-	n.z /= len;
-	return n;
+	normal.x /= len;
+	normal.y /= len;
+	normal.z /= len;
+	return normal;
 }
 
 int raymarch(ray* ray) {
@@ -112,13 +109,13 @@ int main() {
 
 			const int iterations = raymarch(&ray);
 
-			vec3 n = getNormal(ray.startpos);
 
 			// ambiant occlusion
 			const double ao = pow(AO_BASE, -iterations);
 
 			// Phong Shading
-			const double light = MAX(dot(n, vec3_c(0.5773502691896258, 0.5773502691896258, 0.5773502691896258)), 0);
+			const vec3 normal = getNormal(ray.startpos);
+			const double light = MAX(0, dot(normal, vec3_c(0.5773502691896258, 0.5773502691896258, 0.5773502691896258)));
 
 			const double color = ao * light;
 
